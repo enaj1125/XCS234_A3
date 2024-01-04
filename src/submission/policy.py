@@ -164,10 +164,8 @@ class GaussianPolicy(BasePolicy, nn.Module):
             https://pytorch.org/docs/stable/distributions.html
         """
         ### START CODE HERE ###
-        # mean = self.network(observations)
-        # sigma = self.std()
-        # distribution = torch.distributions.MultivariateNormal(mean, torch.diag(sigma))
         mean = self.network(observations)
-        distribution = ptd.Normal(mean, self.std())
+        sigma = self.std()
+        distribution = torch.distributions.MultivariateNormal(mean, torch.diag(sigma))
         ### END CODE HERE ###
         return distribution

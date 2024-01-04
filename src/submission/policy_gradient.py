@@ -100,7 +100,7 @@ class PolicyGradient(object):
         else:
             self.policy = GaussianPolicy(self.network, self.action_dim, self.device)
 
-        self.optimizer = torch.optim.Adam(self.network.parameters())
+        self.optimizer = torch.optim.Adam(self.network.parameters(), lr=self.lr)
         ### END CODE HERE ###
 
     def init_averages(self):
@@ -220,7 +220,7 @@ class PolicyGradient(object):
             rewards = path["reward"]
             ### START CODE HERE ###
             gamma = self.config["hyper_params"]["gamma"]
-            returns = np.empty_like(rewards)
+            returns = np.zeros(len(rewards))
             returns[-1] = rewards[-1]
             for t in range(len(rewards)-2, -1, -1):
                 returns[t] = rewards[t] + gamma * returns[t+1]
@@ -310,9 +310,18 @@ class PolicyGradient(object):
         actions = np2torch(actions, device=self.device)
         advantages = np2torch(advantages, device=self.device)
         ### START CODE HERE ###
-        next_states, reward = self.env.step(actions)
-        loss = -self.policy.log_prob(actions) * reward
+
+        # Compute loss 
+        action_distribution = self.policy.action_distribution(observations)
+        log_prob = action_distribution.log_prob(actions)
+        loss = - torch.mean(log_prob * advantages)
+        
+        # Backpropagation
+        self.optimizer.zero_grad()
         loss.backward()
+        
+        # Gradient Descent Step
+        self.optimizer.step()
 
         ### END CODE HERE ###
 
