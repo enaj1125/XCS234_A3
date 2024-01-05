@@ -227,7 +227,6 @@ class PolicyGradient(object):
 
             ### END CODE HERE ###
             all_returns.append(returns)
-            print("all returns", all_returns)
         returns = np.concatenate(all_returns)
         return returns
 
@@ -249,14 +248,10 @@ class PolicyGradient(object):
         This function is called only if self.config["model_training"]["normalize_advantage"] is True.
         """
         ### START CODE HERE ###
-        flag = self.config["model_training"]["normalize_advantage"]
-        if flag:
-            mean = advantages.mean()
-            std = advantages.std()
-            normalized_advantages = [(x - mean) / std for x in advantages]
-        else:
-            normalized_advantages = advantages
-
+        mean = advantages.mean()
+        std = advantages.std()
+        normalized_advantages = [(x - mean) / (std + 10 ** (-8))for x in advantages]
+        normalized_advantages = np.asarray(normalized_advantages, dtype=np.float32)
         ### END CODE HERE ###
         return normalized_advantages
 
