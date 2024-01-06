@@ -100,7 +100,7 @@ class PolicyGradient(object):
         else:
             self.policy = GaussianPolicy(self.network, self.action_dim, self.device)
 
-        self.optimizer = torch.optim.Adam(self.network.parameters(), lr=self.lr)
+        self.optimizer = torch.optim.Adam(self.policy.parameters(), lr=self.lr)
         ### END CODE HERE ###
 
     def init_averages(self):
@@ -248,10 +248,7 @@ class PolicyGradient(object):
         This function is called only if self.config["model_training"]["normalize_advantage"] is True.
         """
         ### START CODE HERE ###
-        mean = advantages.mean()
-        std = advantages.std()
-        normalized_advantages = [(x - mean) / (std + 10 ** (-8))for x in advantages]
-        normalized_advantages = np.asarray(normalized_advantages, dtype=np.float32)
+        normalized_advantages = (advantages - np.mean(advantages)) / np.std(advantages)
         ### END CODE HERE ###
         return normalized_advantages
 

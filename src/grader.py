@@ -254,8 +254,8 @@ class Test_1g(GradedTestCase):
         ref_policy = ref_pg.policy.to(device)
         rand_obs = np.random.randn(10, pg.observation_dim)
         ref_policy.load_state_dict(policy.state_dict())
-        actions = np2torch(policy.act(rand_obs))
-        observations = np2torch(rand_obs)
+        actions = np2torch(policy.act(rand_obs), device=device)
+        observations = np2torch(rand_obs, device=device)
         with torch.no_grad():
             log_probs = (
                 policy.action_distribution(observations).log_prob(actions).cpu().numpy()

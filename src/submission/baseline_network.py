@@ -39,7 +39,7 @@ class BaselineNetwork(nn.Module):
         num_layers = self.config["hyper_params"]["n_layers"]
         layer_size = self.config["hyper_params"]["layer_size"]
         self.network = build_mlp(input_size=obs_space_dim, output_size=1, n_layers=num_layers, size=layer_size)
-        self.optimizer = torch.optim.Adam(self.network.parameters())
+        self.optimizer = torch.optim.Adam(self.network.parameters(), lr = self.lr)
         ### END CODE HERE ###
 
     def forward(self, observations):
@@ -118,7 +118,7 @@ class BaselineNetwork(nn.Module):
         returns = np2torch(returns, device=self.device)
         observations = np2torch(observations, device=self.device)
         ### START CODE HERE ###
-        baseline = self.forward(observations)
+        baseline = self(observations)
         mse_loss = nn.MSELoss()
         loss = mse_loss(baseline, returns)
         # loss.requires_grad = True

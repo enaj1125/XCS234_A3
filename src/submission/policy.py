@@ -123,7 +123,7 @@ class GaussianPolicy(BasePolicy, nn.Module):
         self.network = network
         self.device = device
         ### START CODE HERE ###
-        self.log_std = nn.Parameter(torch.zeros(action_dim, device = self.device)) 
+        self.log_std = nn.Parameter(torch.zeros(action_dim)).to(self.device) 
         ### END CODE HERE ###
 
     def std(self):
@@ -166,6 +166,6 @@ class GaussianPolicy(BasePolicy, nn.Module):
         ### START CODE HERE ###
         mean = self.network(observations)
         sigma = self.std()
-        distribution = torch.distributions.MultivariateNormal(mean, torch.diag(sigma))
+        distribution = torch.distributions.MultivariateNormal(mean, scale_tril=torch.diag(sigma))
         ### END CODE HERE ###
         return distribution
